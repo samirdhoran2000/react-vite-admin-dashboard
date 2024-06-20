@@ -1,0 +1,22 @@
+/* src/App.css */
+.main-content {
+  margin-left: 10px;
+  padding-top: 60px; /* Ensure content is below the header */
+  transition: margin-left 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 60px;
+  }
+}
