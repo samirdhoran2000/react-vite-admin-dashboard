@@ -6,7 +6,9 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <h2>Admin Dashboard</h2>
+      <div className=" empty-space"></div>
       <ul>
+      
         <li>
           <NavLink
             to="/"

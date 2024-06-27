@@ -9,6 +9,7 @@ const Header = () => {
   const locationValue = location.pathname.substring(1, location.pathname.length - 1);
   return (
     <div className="header">
+      <div className="space-div"></div>
       <div className="header-content">
         {locationValue === "/" ? (
           <h3>
