@@ -1,8 +1,13 @@
 /* eslint-disable react/prop-types */
-import { DataGrid } from "@mui/x-data-grid";
-// import PropTypes from "prop-types";
-// import { useState } from "react";
-// import { exportData } from "./data";
+import Box from "@mui/material/Box";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarExport,
+  GridToolbarDensitySelector,
+} from "@mui/x-data-grid";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -65,17 +70,27 @@ const columns = [
   },
 ];
 
-// const rows = [
-//   { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-//   { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-//   { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-//   { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-//   { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-//   { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-//   { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-//   { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-//   { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-// ];
+
+
+const CustomToolbar = () => {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector
+        slotProps={{ tooltip: { title: "Change density" } }}
+      />
+      <Box sx={{ flexGrow: 1 }} />
+      <GridToolbarExport
+        slotProps={{
+          tooltip: { title: "Export data" },
+          button: { variant: "outlined" },
+        }}
+      />
+    </GridToolbarContainer>
+  );
+};
+
 function CustomTable({ data: exportData }) {
   // const [exData, setExData] = useState([]);
   console.log("data in table compo : ", exportData);
@@ -89,41 +104,13 @@ function CustomTable({ data: exportData }) {
             paginationModel: { page: 0, pageSize: 10 },
           },
         }}
+        slots={{
+          toolbar: CustomToolbar,
+        }}
         pageSizeOptions={[5, 10, 20]}
         checkboxSelection
       />
     </div>
   );
 }
-
-// Define prop types with shape for exportData
-
-// const dataShape = PropTypes.shape({
-//   id: PropTypes.number,
-//   date: PropTypes.string,
-//   exporter_name: PropTypes.string,
-//   consignee_name: PropTypes.string,
-//   hs_code: PropTypes.string,
-//   product_description: PropTypes.string,
-//   unit_quantity: PropTypes.string,
-//   port: PropTypes.string,
-//   foreign_port: PropTypes.string,
-//   foreign_country: PropTypes.string,
-//   quantity: PropTypes.number,
-//   unit_fob_inr: PropTypes.number,
-//   total_fob_inr: PropTypes.number,
-// });
-
-// CustomTable.propTypes = {
-//   data: PropTypes.shape({
-//     exportData: PropTypes.arrayOf(dataShape),
-//     country: PropTypes.string,
-//   }),
-//   // otherProp: PropTypes.string, // Define other props if necessary
-// };
-
-// CustomTable.defaultProps = {
-//   exportData: {}, // Default value for exportData if necessary
-// };
-
 export default CustomTable;
