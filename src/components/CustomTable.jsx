@@ -11,9 +11,9 @@ import {
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
-  { field: "date", headerName: "Order Date", width: 130 },
-  { field: "exporter_name", headerName: "Exporter", width: 130 },
-  { field: "consignee_name", headerName: "Consignee", width: 130 },
+  { field: "order_date", headerName: "Order Date", width: 130 },
+  { field: "exporter_name", headerName: "Exporter Name", width: 130 },
+  { field: "consignee_name", headerName: "Consignee Name", width: 130 },
   {
     field: "hs_code",
     headerName: "HS Code",
@@ -35,7 +35,7 @@ const columns = [
     width: 90,
   },
   {
-    field: "port",
+    field: "ports",
     headerName: "Port",
     // type: "number",
     width: 90,
@@ -57,16 +57,22 @@ const columns = [
     width: 90,
   },
   {
-    field: "unit_fob_inr",
+    field: "unit_inr_ammount",
     headerName: "Unit INR",
     type: "number",
     width: 90,
   },
   {
-    field: "total_fob_inr",
+    field: "total_inr_ammount",
     headerName: "Total INR",
     type: "number",
     width: 90,
+  },
+  {
+    field: "product_type",
+    headerName: "Product Type",
+    type: "string",
+    width: 110,
   },
 ];
 

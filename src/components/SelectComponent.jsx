@@ -11,25 +11,28 @@ import Spinner from "./Spinner";
 
 const SelectComponent = ({ sendData }) => {
   const [country, setCountry] = useState("All");
+  const [product, setProduct] = useState("All");
   const [averageData, setAverageData] = useState([]);
   const [exportData, setExportData] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
 
-  const fetchData = async () => {
+  const fetchData = async ({ product = "" }) => {
     try {
       const [averageRes, exportRes] = await Promise.all([
         // fetch(`${process.env.REACT_APP_API_URL}/getAverageData`),
         // fetch(`${process.env.REACT_APP_API_URL}/getExportData`),
-        fetch(`http://localhost:3000/api/getAverageData`),
-        fetch(`http://localhost:3000/api/getExportData`),
+        fetch(
+          `${import.meta.env.VITE_BASE_URL}/getAverageData?product=${product}`
+        ),
+        fetch(`${import.meta.env.VITE_BASE_URL}/getExportData`),
       ]);
 
+      console.log(import.meta.env.VITE_BASE_URL);
       const averageData = await averageRes.json();
       const exportData = await exportRes.json();
 
       setAverageData(averageData?.result?.rows || []);
       setExportData(exportData?.result?.rows || []);
-      setLoading(false); // Set loading to false when data is fetched
 
       // Send all data initially to the parent
       sendFilteredData(
@@ -37,6 +40,7 @@ const SelectComponent = ({ sendData }) => {
         averageData?.result?.rows || [],
         exportData?.result?.rows || []
       );
+      setLoading(false); // Set loading to false when data is fetched
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setLoading(false);
@@ -44,8 +48,8 @@ const SelectComponent = ({ sendData }) => {
   };
 
   useEffect(() => {
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData({ products: "" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendFilteredData = (countryVal, averageData, exportData) => {
@@ -72,9 +76,20 @@ const SelectComponent = ({ sendData }) => {
     });
   };
 
-  const handleChange = (event) => {
-    const value = event.target.value;
-    setCountry(value);
+  const handleChange = ({ value, name }) => {
+    // const value = event.target.value;
+    // console.log(event.target);
+    if (name === "country") {
+      setCountry(value);
+    } else if (name === "product") {
+      setProduct(value);
+      fetchData({ product: value });
+    }
+    console.log({ country, product });
+    console.log(value, name);
+    // sendFilteredData(value, averageData, exportData);
+    // setCountry(value);
+    // setProduct(value);
     sendFilteredData(value, averageData, exportData);
   };
 
@@ -83,8 +98,11 @@ const SelectComponent = ({ sendData }) => {
     ...new Set(exportData.map((item) => item.foreign_country)),
   ];
 
+  // const productOptions = ["All", "Leather Wallet", "Leather Bag", "Cotton"];
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div
+      style={{ display: "flex", alignItems: "center", justifyContent: "start" }}
+    >
       <Box
         height={50}
         width={200}
@@ -102,7 +120,10 @@ const SelectComponent = ({ sendData }) => {
             id="country-select"
             value={country}
             label="Country"
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e.target);
+            }}
+            name="country"
             sx={{ minHeight: 50, textTransform: "capitalize" }}
           >
             {countryOptions.map((item) => (
@@ -115,9 +136,45 @@ const SelectComponent = ({ sendData }) => {
               </MenuItem>
             ))}
           </Select>
-          {loading && <Spinner />}
         </FormControl>
       </Box>
+      {/* This is product select section */}
+      {/* <Box
+        height={50}
+        width={200}
+        sx={{ minWidth: 120, minHeight: 70, margin: "0 5px" }}
+      >
+        <FormControl fullWidth sx={{ minHeight: 100 }}>
+          <InputLabel
+            id="product-select-label"
+            sx={{ minWidth: 120, minHeight: 120 }}
+          >
+            Product
+          </InputLabel>
+          <Select
+            labelId="product-select-label"
+            id="product-select"
+            value={product}
+            label="Product"
+            onChange={(e) => {
+              handleChange(e.target);
+            }}
+            name="product"
+            sx={{ minHeight: 50, textTransform: "capitalize" }}
+          >
+            {productOptions.map((item) => (
+              <MenuItem
+                key={item}
+                value={item}
+                sx={{ textTransform: "capitalize" }}
+              >
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+          </FormControl>
+          </Box> */}
+          {loading && <Spinner />}
     </div>
   );
 };

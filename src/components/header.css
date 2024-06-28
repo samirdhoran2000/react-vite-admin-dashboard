@@ -13,10 +13,11 @@
   z-index: 1000;
   width: 100%; /* Adjust width considering sidebar width */
   margin-left: auto; /* Ensure it aligns to the right */
-  z-index: 1;
+  z-index: 7;
 }
 .space-div{
-  display: none;
+  /* display: none; */
+  width: 350px;
 }
 
 .header-content {
