@@ -6,7 +6,7 @@ import "./header.css";
 
 const Header = () => {
     const location = useLocation();
-  const locationValue = location.pathname.substring(1, location.pathname.length - 1);
+  const locationValue = location.pathname.substring(1, location.pathname.length);
   return (
     <div className="header">
       <div className="space-div"></div>

@@ -20,3 +20,11 @@
     margin-left: 60px;
   }
 }
+
+ul{
+  list-style: none;
+}
+
+*{
+  /* outline: 1px solid red; */
+}

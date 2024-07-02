@@ -19,6 +19,14 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
+            to="/uploadFile"
+            className={({ isActive }) => (isActive ? "active" : undefined)}
+          >
+            Files
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
             to="/users"
             className={({ isActive }) => (isActive ? "active" : undefined)}
           >
