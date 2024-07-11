@@ -1,7 +1,4 @@
-/* eslint-disable react/prop-types */
-// import * as React from "react";
 import { useState, useEffect } from "react";
-// import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,57 +6,48 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Spinner from "./Spinner";
 
+// eslint-disable-next-line react/prop-types
 const SelectComponent = ({ sendData }) => {
   const [country, setCountry] = useState("All");
-  const [product, setProduct] = useState("All");
+  const [product, setProduct] = useState("leather");
   const [averageData, setAverageData] = useState([]);
   const [exportData, setExportData] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(false);
 
-  const fetchData = async ({ product = "" }) => {
+  const fetchData = async (product = "leather") => {
+    setLoading(true);
     try {
       const [averageRes, exportRes] = await Promise.all([
-        // fetch(`${process.env.REACT_APP_API_URL}/getAverageData`),
-        // fetch(`${process.env.REACT_APP_API_URL}/getExportData`),
-        fetch(
-          `${import.meta.env.VITE_BASE_URL}/getAverageData?product=${product}`
-        ),
-        fetch(`${import.meta.env.VITE_BASE_URL}/getExportData`),
+        fetch(`${import.meta.env.VITE_BASE_URL}/getAverageData?product=${product}`),
+        fetch(`${import.meta.env.VITE_BASE_URL}/getExportData?product=${product}`),
       ]);
 
-      console.log(import.meta.env.VITE_BASE_URL);
       const averageData = await averageRes.json();
       const exportData = await exportRes.json();
 
       setAverageData(averageData?.result?.rows || []);
       setExportData(exportData?.result?.rows || []);
 
-      // Send all data initially to the parent
-      sendFilteredData(
-        "All",
-        averageData?.result?.rows || [],
-        exportData?.result?.rows || []
-      );
-      setLoading(false); // Set loading to false when data is fetched
+      sendFilteredData("All", averageData?.result?.rows || [], exportData?.result?.rows || []);
     } catch (error) {
       console.error("Failed to fetch data:", error);
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData({ products: "" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData();
   }, []);
 
   const sendFilteredData = (countryVal, averageData, exportData) => {
     const filteredExportData = exportData.filter(
       (item) => countryVal === "All" || item.foreign_country === countryVal
     );
-    const avgData =
-      averageData.find(
-        (item) => countryVal === "All" || item.foreign_country === countryVal
-      ) || {};
+
+    const avgData = averageData.find(
+      (item) => countryVal === "All" || item.foreign_country === countryVal
+    ) || {};
 
     const {
       average_price: averagePrice,
@@ -76,43 +64,26 @@ const SelectComponent = ({ sendData }) => {
     });
   };
 
-  const handleChange = ({ value, name }) => {
-    // const value = event.target.value;
-    // console.log(event.target);
+  const handleChange = (e) => {
+    const { value, name } = e.target;
+
     if (name === "country") {
       setCountry(value);
+      sendFilteredData(value, averageData, exportData);
     } else if (name === "product") {
       setProduct(value);
-      fetchData({ product: value });
+      fetchData(value);
     }
-    console.log({ country, product });
-    console.log(value, name);
-    // sendFilteredData(value, averageData, exportData);
-    // setCountry(value);
-    // setProduct(value);
-    sendFilteredData(value, averageData, exportData);
   };
 
-  const countryOptions = [
-    "All",
-    ...new Set(exportData.map((item) => item.foreign_country)),
-  ];
+  const countryOptions = ["All", ...new Set(exportData.map((item) => item.foreign_country))];
+  const productOptions = ["leather", "cotton"];
 
-  // const productOptions = ["All", "Leather Wallet", "Leather Bag", "Cotton"];
   return (
-    <div
-      style={{ display: "flex", alignItems: "center", justifyContent: "start" }}
-    >
-      <Box
-        height={50}
-        width={200}
-        sx={{ minWidth: 120, minHeight: 70, margin: "0 5px" }}
-      >
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
+      <Box height={50} width={200} sx={{ minWidth: 120, minHeight: 70, margin: "0 5px" }}>
         <FormControl fullWidth sx={{ minHeight: 100 }}>
-          <InputLabel
-            id="country-select-label"
-            sx={{ minWidth: 120, minHeight: 120 }}
-          >
+          <InputLabel id="country-select-label" sx={{ minWidth: 120, minHeight: 120 }}>
             Country
           </InputLabel>
           <Select
@@ -120,35 +91,21 @@ const SelectComponent = ({ sendData }) => {
             id="country-select"
             value={country}
             label="Country"
-            onChange={(e) => {
-              handleChange(e.target);
-            }}
+            onChange={handleChange}
             name="country"
             sx={{ minHeight: 50, textTransform: "capitalize" }}
           >
             {countryOptions.map((item) => (
-              <MenuItem
-                key={item}
-                value={item}
-                sx={{ textTransform: "capitalize" }}
-              >
+              <MenuItem key={item} value={item} sx={{ textTransform: "capitalize" }}>
                 {item}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
       </Box>
-      {/* This is product select section */}
-      {/* <Box
-        height={50}
-        width={200}
-        sx={{ minWidth: 120, minHeight: 70, margin: "0 5px" }}
-      >
+      <Box height={50} width={200} sx={{ minWidth: 120, minHeight: 70, margin: "0 5px" }}>
         <FormControl fullWidth sx={{ minHeight: 100 }}>
-          <InputLabel
-            id="product-select-label"
-            sx={{ minWidth: 120, minHeight: 120 }}
-          >
+          <InputLabel id="product-select-label" sx={{ minWidth: 120, minHeight: 120 }}>
             Product
           </InputLabel>
           <Select
@@ -156,31 +113,21 @@ const SelectComponent = ({ sendData }) => {
             id="product-select"
             value={product}
             label="Product"
-            onChange={(e) => {
-              handleChange(e.target);
-            }}
+            onChange={handleChange}
             name="product"
             sx={{ minHeight: 50, textTransform: "capitalize" }}
           >
             {productOptions.map((item) => (
-              <MenuItem
-                key={item}
-                value={item}
-                sx={{ textTransform: "capitalize" }}
-              >
+              <MenuItem key={item} value={item} sx={{ textTransform: "capitalize" }}>
                 {item}
               </MenuItem>
             ))}
           </Select>
-          </FormControl>
-          </Box> */}
-          {loading && <Spinner />}
+        </FormControl>
+      </Box>
+      {loading && <Spinner />}
     </div>
   );
 };
-
-// SelectComponent.propTypes = {
-//   sendData: PropTypes.func.isRequired,
-// };
 
 export default SelectComponent;
